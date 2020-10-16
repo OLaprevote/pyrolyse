@@ -53,7 +53,8 @@ ways to rotate everything from different angles at once, like
 of 25° and the second one of 10°. While this wouldn't probably be used in
 a serious PyRosetta script, the behavior would still feel more natural.
 
-5. Make the variable locations actually make sense.
+5. Make the variable locations actually make sense, for example with
+objects for xml import or Movers.
 Why write
 ```
 from pyrosetta.rosetta.protocols.minimization_packing import MinMover
@@ -88,6 +89,9 @@ sfxn = foo1()
 movemap = foo2()
 min_mover = movers.Min(score_function=sfxn, movemap=movemap)
 ```
+There should also be a function `apply_movers` wich simply takes
+a pose and a list/tuple of movers, then apply them sequencially to said pose.
+In the same tone, the `SequenceMover` should also be able to take a list of movers.
 
 7. Use XML as functions
 RosettaScript allows variables, yet it didn't seem set in PyRosetta.
