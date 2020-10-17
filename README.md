@@ -1,23 +1,18 @@
 # Pyrolyse, a wrapper for PyRosetta
 
-Pyrolyse is a python wrapper around PyRosetta, which is already a python
-wrapper around Rosetta, written in C++.
-So why wrapping? Because currently, PyRosetta feels like a C++ interface.
-Docstrings aren't this informative if you don't know how they are written
-in C++, there is some boilerplate code, the organization doesn't seem
-quite logical either, and a lot of objects are Rosetta types while they
-feel like a simple dictionary, a numpy array or a pandas dataframe is
-all you'd need to feel right at ease.
+Pyrolyse goal is to give PyRosetta a more pythonic vibe.
+Pyrosetta is a python API of Rosetta, a software intended for protein
+design.
 
-Pyrolyse NEEDS PyRosetta to be installed.
+*Pyrolyse NEEDS PyRosetta to be installed.*
 
-Hence Pyrolyse is intended to be a digest of Pyrosetta, but they can
-absolutely work hand in hand. They are actually intended to work hand
-in hand: this way you can take best of both worlds!
+It mostly performs monkey-patching of existing classes. As PyRosetta and Rosetta are ever-growing softwares, Pyrolyse is currently not intended to be fully patching PyRosetta. It would actually be advised to let them work
+hand in hand.
+
 
 Here are a few things I'd want to achieve:
 
-1. The standard output of most pyrosetta functions (like `init`,
+1. Most pyrosetta functions (like `init`,
 `pose_from_xxx` or `get_function_blabla` always give a standard output.
 I personnally don't care about it, so I would like to either store it
 in a global variable pyrolyse.LOG. Still outputing errors, though.
