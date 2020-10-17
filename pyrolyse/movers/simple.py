@@ -1,9 +1,15 @@
 import copy
-from pyrosetta.rosetta.protocols.simple_moves import SmallMover as _SmallMover
+from pyrosetta.rosetta.protocols.simple_moves import SmallMover
 
-SmallMover = copy.deepcopy(_SmallMover)
 
 class _AngleDict(type(dict())):
+    """Dict with setitem setting max_angle values from an object
+
+    Parameters:
+    -----------
+    obj
+        Object with an angle_max method.
+    """
     def __init__(self, obj):
         self.obj = obj
         angles_dict = {sec: obj.get_angle_max(sec) for sec in 'HEL'}
@@ -21,23 +27,22 @@ def _set_angles_max(self, angles):
     for sec in angles.keys():
         self.angle_max(sec, angles[sec])
 
-
-def _get_movemap(self):
-    return SmallMover.movemap
-
-
-def _set_movemap(self, value):
-    super().movemap(value)
+# TODO
+# Have movemap as a settable function, so that
+# >>> smallmover.movemap(pose) returns MoveMap object
+# and the movemap can be set like
+# >>> smallmover.movemap = MoveMap()
+#
+# def _get_movemap(self):
+#     return SmallMover.movemap
+#
+#
+# def _set_movemap(self, value):
+#     super().movemap(value)
 
 
 # TODO find a way to change "path" of class.
-# Creating a child class of SmallMover crashes because of C++ virtual functions.
-# See for yourself:
-# class Small(SmallMover):
-#    pass
-
-# Add attributes to SmallMover.
-# SmallMover.movemap = property(SmallMover.movemap, SmallMover.movemap)
+# Child class not possible because of virtual functions.
 SmallMover.movemap = property(_get_movemap, _set_movemap)
 SmallMover.temperature = property(SmallMover.temperature, SmallMover.temperature)
 SmallMover.nmoves = property(SmallMover.nmoves, SmallMover.nmoves)
@@ -65,7 +70,6 @@ arg0: pyrosetta.rosetta.protocols.simple_moves.ShearMover
 
 Attributes
 ----------
-movemap
 temperature
 nmoves
 angles_max: dict
@@ -75,11 +79,3 @@ Methods
 apply
 angle_max
 """
-
-if __name__ == '__main__':
-    import pyrosetta as ros
-
-    mm = ros.MoveMap()
-    mover = SmallMover(mm, 1., 1)
-    mover2 = _SmallMover(mm, 1., 1)
-    print(mover.temperature, mover2.temperature)
