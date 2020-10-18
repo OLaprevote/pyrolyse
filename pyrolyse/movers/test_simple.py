@@ -1,4 +1,6 @@
 import pytest
+from contextlib import redirect_stdout
+from io import StringIO
 
 from .simple import SmallMover
 from pyrosetta import init, MoveMap, pose_from_sequence, Pose
@@ -7,34 +9,36 @@ init()
 
 class TestSmallMover:
     def setup_class(cls):
-        cls.mm = MoveMap()
-        cls.mm.set_bb(True)
+        mmap = MoveMap()
 
         cls.pose = pose_from_sequence('LITTLE')
 
-        cls.small = SmallMover(cls.mm, 1., 1)
+        cls.small = SmallMover(mmap, 1., 1)
 
     def test_attributes(self):
         assert self.small.temperature == 1.
         assert self.small.nmoves == 1
-        # assert type(self.small.movemap(self.pose)) == type(self.mm)
 
     def test_set_attributes(self):
         kT = 100.
         n = 2
-        self.small.temperature = kT
-        self.small.nmoves = n
-        # new_mm = MoveMap()
-        # self.small.movemap = new_mm
+        new_mm = MoveMap()
+        new_mm.set_bb(True)
 
+        self.small.temperature = kT
         assert self.small.temperature == kT
+
+        self.small.nmoves = n
         assert self.small.nmoves == n
-        # assert self.small.movemap == new_mm
+
+        self.small.movemap = new_mm
+        output_mmap = self.small.movemap(self.pose)
+        assert output_mmap.get_bb(1) is True
 
     def test_apply_pose(self):
         new_pose = Pose()
         new_pose.assign(self.pose)
-        self.small.apply(new_pose)
+        self.small(new_pose)
         assert new_pose.residues[-1].xyz(4) != self.pose.residues[-1].xyz(4)
 
     @pytest.mark.parametrize('struct', ['H','E','L'])

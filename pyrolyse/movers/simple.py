@@ -1,8 +1,9 @@
 import copy
+from pyrosetta import MoveMap
 from pyrosetta.rosetta.protocols.simple_moves import SmallMover
 
 
-class _AngleDict(type(dict())):
+class _AngleMaxDict(type(dict())):
     """Dict with setitem setting max_angle values from an object
 
     Parameters:
@@ -20,33 +21,35 @@ class _AngleDict(type(dict())):
 
 
 def _get_angles_max(self):
-    return(_AngleDict(self))
+    return(_AngleMaxDict(self))
 
 
 def _set_angles_max(self, angles):
     for sec in angles.keys():
         self.angle_max(sec, angles[sec])
 
-# TODO
-# Have movemap as a settable function, so that
-# >>> smallmover.movemap(pose) returns MoveMap object
-# and the movemap can be set like
-# >>> smallmover.movemap = MoveMap()
-#
-# def _get_movemap(self):
-#     return SmallMover.movemap
-#
-#
-# def _set_movemap(self, value):
-#     super().movemap(value)
+
+# Dark magic, temporary if possible.
+class CallableProperty(property):
+    def __init__(self, fcall=None, fget=None, fset=None, fdel=None, doc=None):
+        self._call = fcall
+        super().__init__(fget, fset, fdel, doc)
+
+    def __call__(self, *args): return self._call(self, *args)
 
 
 # TODO find a way to change "path" of class.
 # Child class not possible because of virtual functions.
-SmallMover.movemap = property(_get_movemap, _set_movemap)
+
+SmallMover.movemap = CallableProperty(SmallMover.movemap.__call__, SmallMover.movemap.__get__,
+                                      SmallMover.movemap)
+
 SmallMover.temperature = property(SmallMover.temperature, SmallMover.temperature)
 SmallMover.nmoves = property(SmallMover.nmoves, SmallMover.nmoves)
 SmallMover.angles_max = property(_get_angles_max, _set_angles_max)
+
+# Make SmallMover callable
+SmallMover.__call__ = SmallMover.apply
 
 SmallMover.__doc__ = """Mover perturbing phi and psi of a random residue
 
