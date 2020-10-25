@@ -1,6 +1,4 @@
 import pytest
-from contextlib import redirect_stdout
-from io import StringIO
 
 from .simple import SmallMover
 from pyrosetta import init, MoveMap, pose_from_sequence, Pose
