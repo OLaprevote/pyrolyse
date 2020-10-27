@@ -7,8 +7,8 @@ class CallableProperty(property):
     def __call__(self, *args): return self._call(self, *args)
 
 
-class AngleMaxDict(type(dict())):
-    """Dict with setitem setting max_angle values from an object
+class AngleMaxDict(dict):
+    """Dict where __setitem__ sets max_angle values from an object
 
     Parameters:
     -----------
@@ -18,7 +18,7 @@ class AngleMaxDict(type(dict())):
     def __init__(self, obj):
         self.obj = obj
         angles_dict = {sec: obj.get_angle_max(sec) for sec in 'HEL'}
-        type(dict()).__init__(self, **angles_dict)
+        super().__init__(self, **angles_dict)
 
     def __setitem__(self, index, value):
         self.obj.angle_max(index, value)
