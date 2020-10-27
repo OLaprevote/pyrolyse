@@ -1,5 +1,5 @@
 from pyrosetta import init
 
-from . import mover, pythonizer
+from . import movers, pythonizer
 
 # init()
