@@ -3,7 +3,7 @@ import pytest
 from .simple import SmallMover
 from pyrosetta import init, MoveMap, pose_from_sequence, Pose
 
-init()
+init(set_logging_handler=True)
 
 class TestSmallMover:
     def setup_class(cls):
