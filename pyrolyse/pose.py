@@ -1,20 +1,6 @@
 """
 TODO
 
-Torsion list
-------------
-alpha
-beta
-delta
-epsilon
-gamma
-mu
-omega
-theta
-zeta
-phi
-psi
-
 Read/Set property
 -----------------
 fold_tree   # Read & set property
@@ -22,19 +8,20 @@ pdb_info    # Read & set property
 
 Other ideas
 -----------
-
 conformation # Read-only attribute
-set_new_conformation # Setter ???
+set_new_conformation # Setter?
 
 append_residue # Summarize all append_residue methods?
 batch_get_xyz and batch_set_xyz # See how it works
 insert_residue  # See if possible to summarize insert_residue_by_bond, insert_residue_by_jump
                 # and insert_residue_by_atoms
 
-chi     # (chino: int, seqpos: int) a numpy array? -> Wouldn't work, not same dimension.
+chi     # (chino: int, seqpos: int) a numpy array? -> Wouldn't work,
+        # not same dimension.
+        # Could create a list of list with tuples and tuples of slices
+        # understanding.
 
 aa # Transform into a list with callables.
-
 
 pdb_rsd     # Numpy-ish (takes a tuple (chain, resNo) as argument)
 
@@ -44,67 +31,48 @@ secstruct   # pose.secstruct[24] returns secstruct of residue 24?
 set_secstruct   # then settable for range of residues.
 """
 
-from pyrosetta.rosetta.core.pose import (make_pose_from_sequence, PDBInfo,
-                                         Pose)
+from copy import copy
+from pyrosetta.rosetta.core.pose import (make_pose_from_sequence,
+                                         PDBInfo, Pose)
 
-import numpy as np
 
 __all__ = ['Pose', 'pose_from_sequence']
 
-
 class TorsionList(list):
-    def __init__(self, instance, torsion_setter, *args):
-        self.instance = instance
+    def __init__(self, pose_instance, torsion_setter, *args):
+        self.pose_instance = pose_instance
         self.torsion_setter = torsion_setter
         super().__init__(*args)
 
     def __setitem__(self, index, value):
         if isinstance(index, int):
-            self.torsion_setter(self.instance, index+1, value)
+            self.torsion_setter(self.pose_instance, index+1, value)
 
         # Slices are obtained when using semi-colons to get items, e.g. a[2:8:3]
         elif isinstance(index, slice):
             # Find concerned residue indexes
-            residues = range(1, self.instance.size+1)[index]
+            residues = range(1, self.pose_instance.size+1)[index]
             for resid, new_psi in zip(residues, value):
-                self.torsion_setter(self.instance, resid, new_psi)
+                self.torsion_setter(self.pose_instance, resid, new_psi)
 
         else: raise TypeError(("TorsionList indices must be integers or"
                                " slices, not {}").format(type(index).__name__))
 
 
-class PsiList(list):
-    def __init__(self, instance, *args):
-        self.instance = instance
-        super().__init__(*args)
+def torsion_list_property(getter, setter):
+    def get_torsions(pose_instance):
+        torsion_list = (getter(pose_instance, resid) for resid in range(1, pose_instance.size+1))
+        return TorsionList(pose_instance, setter, torsion_list)
 
-    def __setitem__(self, index, value):
-        if isinstance(index, int):
-            self.instance.set_psi(index+1, value)
+    def set_torsions(pose_instance, new_torsions):
+        for resid in range(pose_instance.size):
+            setter(pose_instance, resid+1, new_torsions[resid])
 
-        # Slices are obtained when using semi-colons to get items, e.g. a[2:8:3]
-        elif isinstance(index, slice):
-            # Find concerned residue indexes
-            residues = range(1, self.instance.size+1)[index]
-            for resid, new_psi in zip(residues, value):
-                self.instance.set_psi(resid, new_psi)
-
-        else: raise TypeError(("TorsionList indices must be integers or"
-                               " slices, not {}").format(type(index).__name__))
-
-
-def get_psis(instance):
-    psi_list = [instance.psi(resid) for resid in range(1, instance.size+1)]
-    return TorsionList(instance, Pose.set_psi, psi_list)
-
-
-def set_psis(instance, new_psis):
-    for resid in range(instance.size):
-        instance.set_psi(resid+1, new_psis[resid])
+    return property(get_torsions, set_torsions)
 
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
-    """Returns a pose from single-letter protein sequence. /!\ From pyrolyse
+    """Returns a pose from single-letter protein sequence. !!! pyrolyse version
 
     Returns a Pose object generated from a single-letter sequence of amino acid
     residues in <seq> using the <res_type> ResidueType and creates N- and C-
@@ -144,22 +112,27 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
 
     return pose
 
-# Read-only attributes
-Pose.const_data_cache = property(Pose.const_data_cache)
-Pose.data = property(Pose.data)
-Pose.dof = property(Pose.dof)
-Pose.energies = property(Pose.energies)
-Pose.atom_tree = property(Pose.atom_tree)
-Pose.membrane_info = property(Pose.membrane_info)
-Pose.num_chains = property(Pose.num_chains)
-Pose.num_jump = property(Pose.num_jump)
-Pose.observer_cache = property(Pose.observer_cache)
-Pose.reference_pose_set = property(Pose.reference_pose_set)
-Pose.reference_pose_set_cop = property(Pose.reference_pose_set_cop)
-Pose.sequence = property(Pose.sequence)
-Pose.size = property(Pose.size)
-Pose.total_atoms = property(Pose.total_atoms)
-Pose.total_residue = property(Pose.total_residue)
+# Monkey-patch read-only attributes
+# Ex: Pose.size() becomes Pose.size
+# Pose.size = 30 would return an error.
+_read_attributes = ('const_data_cache', 'data', 'dof', 'energies',
+                    'atom_tree', 'membrane_info', 'num_chains',
+                    'num_jump', 'observer_cache', 'reference_pose_set',
+                    'reference_pose_set_cop', 'sequence', 'size',
+                    'total_atoms', 'total_residue')
 
-# Torsion lists
-Pose.psis = property(get_psis, set_psis)
+for attr in _read_attributes:
+    setattr(Pose, attr, property(getattr(Pose, attr)))
+
+# Create torsion tuple
+# Ex: Pose.psis: tuple of psi.
+# Pose.psis[5] returns Pose.psi(6)
+# Pose.psis[5] = 180. uses Pose.set_psi(6, 180.)
+_torsions_attributes = ('alpha', 'beta', 'delta', 'epsilon', 'gamma', 'mu',
+                        'omega', 'theta', 'zeta', 'phi', 'psi')
+
+for attr in _torsions_attributes:
+    torsion_list_name = '{}s'.format(attr)
+    getter = getattr(Pose, attr)
+    setter = getattr(Pose, 'set_{}'.format(attr))
+    setattr(Pose, torsion_list_name, torsion_list_property(getter, setter))
