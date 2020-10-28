@@ -1,7 +1,8 @@
 import pytest
 
-from .simple import SmallMover
-from pyrosetta import init, MoveMap, pose_from_sequence, Pose
+from pyrolyse.movers.simple import SmallMover
+from pyrosetta import init, MoveMap, Pose
+from pyrosetta.rosetta.core.pose import make_pose_from_sequence
 
 init(set_logging_handler=True)
 
@@ -9,7 +10,8 @@ class TestSmallMover:
     def setup_class(cls):
         mmap = MoveMap()
 
-        cls.pose = pose_from_sequence('LITTLE')
+        cls.pose = Pose()
+        make_pose_from_sequence(cls.pose, 'LITTLE', "fa_standard", True)
 
         cls.small = SmallMover(mmap, 1., 1)
 
@@ -37,7 +39,7 @@ class TestSmallMover:
         new_pose = Pose()
         new_pose.assign(self.pose)
         self.small(new_pose)
-        assert new_pose.residues[-1].xyz(4) != self.pose.residues[-1].xyz(4)
+        assert new_pose.residue(6).xyz(4) != self.pose.residue(6).xyz(4)
 
     @pytest.mark.parametrize('struct', ['H','E','L'])
     def test_get_angles_max(self, struct):
