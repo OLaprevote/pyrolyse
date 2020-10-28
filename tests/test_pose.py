@@ -4,7 +4,7 @@ import pytest
 from numpy.testing import assert_array_equal
 
 from pyrosetta import init
-from .pose import Pose, pose_from_sequence
+from pyrolyse.pose import Pose, pose_from_sequence
 
 init(set_logging_handler=True)
 
