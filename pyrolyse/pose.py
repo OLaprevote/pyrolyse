@@ -72,8 +72,8 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
 
     # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here;
     # we have to reserve space for atoms....
-    pose.pdb_info(PDBInfo(pose))
-    pose.pdb_info().name(seq[:8])
+    pose.pdb_info = PDBInfo(pose)
+    pose.pdb_info.name(seq[:8])
 
     return pose
 
