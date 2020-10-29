@@ -6,6 +6,8 @@ Other ideas
 conformation # Read-only attribute
 set_new_conformation # Setter?
 
+Check residues, reslabels and scores.
+
 append_residue # Summarize all append_residue methods?
 batch_get_xyz and batch_set_xyz # See how it works
 insert_residue  # See if possible to summarize insert_residue_by_bond, insert_residue_by_jump
@@ -80,11 +82,10 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
 # Monkey-patch read-only attributes
 # Ex: Pose.size() becomes Pose.size
 # Pose.size = 30 would return an error.
-_read_attributes = ('const_data_cache', 'data', 'dof', 'energies',
-                    'atom_tree', 'membrane_info', 'num_chains',
-                    'num_jump', 'observer_cache', 'reference_pose_set',
-                    'reference_pose_set_cop', 'sequence', 'size',
-                    'total_atoms', 'total_residue')
+_read_attributes = ('const_data_cache', 'data', 'energies', 'atom_tree',
+                    'membrane_info', 'num_chains', 'num_jump', 'observer_cache',
+                    'reference_pose_set', 'reference_pose_set_cop', 'sequence',
+                    'size', 'total_atoms', 'total_residue')
 
 for attr in _read_attributes:
     setattr(Pose, attr, property(getattr(Pose, attr)))

@@ -6,7 +6,11 @@ class TorsionList(list):
 
     def __setitem__(self, index, value):
         if isinstance(index, int):
-            self.torsion_setter(self.pose_instance, index+1, value)
+            if index >= 0:
+                self.torsion_setter(self.pose_instance, index+1, value)
+            else:
+                resid = self.pose_instance.size + index + 1
+                self.torsion_setter(self.pose_instance, resid, value)
 
         # Slices are obtained when using semi-colons to get items, e.g. a[2:8:3]
         elif isinstance(index, slice):
