@@ -1,5 +1,5 @@
 from io import StringIO
-from logging
+import logging
 
 import pyrosetta as ros
 
@@ -10,6 +10,10 @@ __all__ = ['logger', 'LOG', 'get_pose', 'init', 'digest']
 logger = logging.getLogger('rosetta')
 log.setLevel(logging.WARNING)
 
+# LOG catches LOG, the idea is to have a variable you can call if you
+# retrospectively want to see logs while the stdout is disabled.
+# Currently catching anything only if rosetta logger level set to INFO.
+# Also doesn't disable log to be printed to stdout.
 LOG = StringIO()
 
 stream_handler = logging.StreamHandler(LOG)
