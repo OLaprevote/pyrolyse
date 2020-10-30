@@ -1,35 +1,44 @@
-"""
+"""Pyrosetta Pose and utilities monkey-patch
+
 TODO
 
-Other ideas
------------
-conformation # Read-only attribute
-set_new_conformation # Setter?
+conformation and set_new_conformation: getter/setter?
 
 Check residues, reslabels and scores.
 
-append_residue # Summarize all append_residue methods?
-batch_get_xyz and batch_set_xyz # See how it works
-insert_residue  # See if possible to summarize insert_residue_by_bond, insert_residue_by_jump
-                # and insert_residue_by_atoms
+append_residue: summarize all append_residue methods?
+batch_get_xyz and batch_set_xyz: see how it works.
+insert_residue: see if possible to summarize insert_residue_by_bond,
+                insert_residue_by_jump and insert_residue_by_atoms.
 
-chi     # (chino: int, seqpos: int) a numpy array? -> Wouldn't work,
-        # not same dimension.
-        # Could create a list of list with tuples and tuples of slices
-        # understanding.
+chi: (chino: int, seqpos: int) a numpy array? -> Wouldn't work, not
+     same dimension.
+     Could create a list of list with tuples and tuples of slices
+     comprehension.
 
-aa # Transform into a list with callables.
+aa: transform into a list?
 
-pdb_rsd     # Numpy-ish (takes a tuple (chain, resNo) as argument)
+pdb_rsd: pandas DataFrame-ish (takes a tuple (chain, resNo) as item)?
+         like pdb_rsd['A', 10]? Possible to write pdb_rsd['A', 10:20],
+         pdb_rsd['A'].
+         Would pdb_rsd['A':'C', 10:20] work?
 
-replace_residue     # To use as a residue setter?
+replace_residue     # To use as a residue setter for residues?
 
-secstruct   # pose.secstruct[24] returns secstruct of residue 24?
-set_secstruct   # then settable for range of residues.
+secstruct: pose.secstruct[24] returns secstruct of residue 24?
+set_secstruct: then settable for range of residues
+    However, pose.secstruct() returns the sequence of secondary
+    structure while pose.secstruct(24) returns the secondary structure
+    for said residue: maybe this behaviour shouldn't be broken.
 """
 
-from pyrosetta.rosetta.core.pose import (make_pose_from_sequence,
-                                         PDBInfo, Pose)
+from pyrosetta.io import pose_from_sequence
+from pyrosetta.rosetta.core.io.raw_data import ScoreMap
+from pyrosetta.rosetta.core.simple_metrics import clear_sm_data
+from pyrosetta.rosetta.core.pose import (Pose, clearPoseExtraScores,
+                                         make_pose_from_sequence, PDBInfo)
+from pyrosetta.bindings.pose import (PoseResidueAccessor,
+                            PoseResidueLabelAccessor, PoseScoreAccessor)
 
 from .pythonizer.pose import TorsionList, torsion_list_property
 
@@ -40,7 +49,7 @@ __all__ = ['Pose', 'pose_from_sequence']
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     """Returns a pose from single-letter protein sequence.
 
-    Modified from pyrosetta.
+    Modified by pyrolyse from pyrosetta.
     Returns a Pose object generated from a single-letter sequence of amino acid
     residues in <seq> using the <res_type> ResidueType and creates N- and C-
     termini if <auto_termini> is set to True.
@@ -59,7 +68,6 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     pose_from_file()
     pose_from_rcsb()
     """
-    # Needed corrections to work with pyrolyse Pose
     pose = Pose()
     make_pose_from_sequence(pose, seq, res_type, auto_termini)
 
@@ -107,3 +115,61 @@ for attr in _torsions_attributes:
 # Read/Set property
 Pose.fold_tree = property(Pose.fold_tree, Pose.fold_tree)
 Pose.pdb_info = property(Pose.pdb_info, Pose.pdb_info)
+
+
+# Patch data descriptors methods calling monkey-patched attribute.
+def _len_residues(self):
+    return self.pose.size
+
+
+PoseResidueAccessor.__len__ = _len_residues
+
+
+def _len_reslabels(self):
+    return self.pose.pdb_info.nres()
+
+
+def _getitem_reslabels(self, key):
+    """1-based index and slice over residue labels."""
+    if isinstance(key, slice):
+        return (self[i] for i in range(*slice_1base_indicies(key, len(self))))
+    else:
+        if key == 0:
+            raise IndexError("1 base indexing does not support 0 index")
+        if key < 0:
+            key = len(self) + 1 + key
+        return ResidueLabelAccessor(self.pose.pdb_info, key)
+
+
+PoseResidueLabelAccessor.__len__ = _len_reslabels
+PoseResidueLabelAccessor.__getitem__ = _getitem_reslabels
+
+
+def _get_energies_scores(self):
+    import types
+
+    return types.MappingProxyType(self.pose.energies.active_total_energies())
+
+
+def _get_all_scores(self):
+    import types
+
+    return types.MappingProxyType(
+        dict(
+            list(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
+            + list(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
+            + list(self.pose.energies.active_total_energies().items())
+        )
+    )
+
+
+def _clear_scores(self):
+    """ Clear pose energies, extra scores, and SimpleMetric data"""
+    self.pose.energies.clear()
+    clearPoseExtraScores(self.pose)
+    clear_sm_data(self.pose)
+
+
+PoseScoreAccessor.energies = property(_get_energies_scores)
+PoseScoreAccessor.all = property(_get_all_scores)
+PoseScoreAccessor.clear = _clear_scores
