@@ -1,8 +1,16 @@
 import pytest
 
-from pyrolyse.movers.simple import SmallMover
-from pyrosetta import init, MoveMap, Pose
+from importlib import reload
+from sys import modules
+
+# Avoid using other monkey-patched classes imported in other tests
+try:
+    reload(modules['pyrosetta'])
+except: pass
+
+from pyrosetta import init, MoveMap, Pose, pose_from_sequence
 from pyrosetta.rosetta.core.pose import make_pose_from_sequence
+from pyrolyse.movers.simple import SmallMover
 
 init(set_logging_handler=True)
 
@@ -11,7 +19,7 @@ class TestSmallMover:
         mmap = MoveMap()
 
         cls.pose = Pose()
-        make_pose_from_sequence(cls.pose, 'LITTLE', "fa_standard", True)
+        make_pose_from_sequence(cls.pose, 'PYTEST', "fa_standard", True)
 
         cls.small = SmallMover(mmap, 1., 1)
 

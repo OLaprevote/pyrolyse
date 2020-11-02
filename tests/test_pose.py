@@ -1,72 +1,63 @@
 """Test pyrolyse Pose"""
 
 import pytest
+import sys
+import importlib
+
 from numpy.testing import assert_array_equal
 
-from pyrosetta import init, get_fa_scorefxn
-from pyrolyse.pose import Pose, pose_from_sequence, _read_attributes
+from pyrosetta import init
 
 
 init(set_logging_handler=True)
 
-lys_pose = pose_from_sequence('PYTEST')
 
-# Getting membrane_info returns an error as no membrane is set up.
-test_attributes = list(_read_attributes)    # _read_attributes is a tuple
-test_attributes.remove('membrane_info')
+class TestPoseAttributes:
+    from pyrolyse.pose import _read_attributes
+    # Getting membrane_info returns an error as there is no membrane.
+    test_attributes = list(_read_attributes)
+    test_attributes.remove('membrane_info')
 
+    def setup_class(cls):
+        from pyrolyse.pose import pose_from_sequence
+        cls.lys_pose = pose_from_sequence('PYTEST')
 
-# Check getting and setting monkey-patched attributes.
-@pytest.mark.parametrize('attr', test_attributes)
-def test_get_readonly_attributes(attr):
-    getattr(lys_pose, attr)
+    # Lazy but gets the work done.
+    @pytest.mark.parametrize('attr', test_attributes)
+    def test_get_readonly_attributes(self, attr):
+        # Can we get every read-only attribute without error?
+        print(attr)
+        getattr(self.lys_pose, attr)
 
+    @pytest.mark.parametrize('attr', test_attributes)
+    def test_set_readonly_attributes(self, attr):
+        with pytest.raises(AttributeError):
+            setattr(self.lys_pose, attr, None)
 
-@pytest.mark.parametrize('attr', test_attributes)
-def test_set_readonly_attributes(attr):
-    with pytest.raises(AttributeError):
-        setattr(lys_pose, attr, None)
+    @pytest.mark.parametrize('attr', ['fold_tree', 'pdb_info'])
+    def test_get_readwrite_attributes(self, attr):
+        getattr(self.lys_pose, attr)
 
-
-@pytest.mark.parametrize('attr', ['fold_tree', 'pdb_info'])
-def test_get_readwrite_attributes(attr):
-    getattr(lys_pose, attr)
-
-
-@pytest.mark.parametrize('attr', ['fold_tree', 'pdb_info'])
-def test_set_readwrite_attr(attr):
-    old_attr = getattr(lys_pose, attr)
-    setattr(lys_pose, attr, old_attr)
-
-
-@pytest.mark.parametrize('attr', ['fold_tree', 'pdb_info'])
-def test_set_readwrite_attr_wrong_type(attr):
-    wrong_type = 1
-    with pytest.raises(TypeError):
-        setattr(lys_pose, attr, wrong_type)
+    @pytest.mark.parametrize('attr', ['fold_tree', 'pdb_info'])
+    def test_set_readwrite_attr(self, attr):
+        old_attr = getattr(self.lys_pose, attr)
+        setattr(self.lys_pose, attr, old_attr)
 
 
-# Check data descriptors.
-def test_residues():
-    assert lys_pose.residues
-
-
-def test_reslabels():
-    assert lys_pose.reslabels
-
-
-def test_scores():
-    # Killing two birds with one stone by also testing score functions.
-    sfxn = get_fa_scorefxn()
-    sfxn(lys_pose)
-    assert lys_pose.scores
+    @pytest.mark.parametrize('attr', ['fold_tree', 'pdb_info'])
+    def test_set_readwrite_attr_wrong_type(self, attr):
+        wrong_type = 1
+        with pytest.raises(TypeError):
+            setattr(self.lys_pose, attr, wrong_type)
 
 
 @pytest.mark.parametrize('get_torsion,set_torsion,torsion_list',
                          [('phi', 'set_phi', 'phis'), ('psi', 'set_psi', 'psis')]
                          )
 class TestPoseTorsionList:
-    lys_pose = pose_from_sequence('PYTEST')
+    def setup_class(cls):
+        from pyrolyse.pose import pose_from_sequence
+        cls.lys_pose = pose_from_sequence('PYTEST')
 
     def test_get(self, get_torsion, set_torsion, torsion_list):
         assert_array_equal(getattr(self.lys_pose, torsion_list), [180.0]*6)
