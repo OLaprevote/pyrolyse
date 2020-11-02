@@ -43,12 +43,24 @@ class TestPoseAttributes:
         old_attr = getattr(self.lys_pose, attr)
         setattr(self.lys_pose, attr, old_attr)
 
-
     @pytest.mark.parametrize('attr', ['fold_tree', 'pdb_info'])
     def test_set_readwrite_attr_wrong_type(self, attr):
         wrong_type = 1
         with pytest.raises(TypeError):
             setattr(self.lys_pose, attr, wrong_type)
+
+    # Check data descriptors.
+    def test_residues(self):
+        assert self.lys_pose.residues
+
+    def test_reslabels(self):
+        assert self.lys_pose.reslabels
+
+    def test_scores(self):
+        # Killing two birds with one stone by also testing score functions.
+        sfxn = get_fa_scorefxn()
+        sfxn(lys_pose)
+        assert self.lys_pose.scores
 
 
 @pytest.mark.parametrize('get_torsion,set_torsion,torsion_list',
