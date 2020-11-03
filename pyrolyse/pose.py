@@ -32,7 +32,6 @@ set_secstruct: then settable for range of residues
     for said residue: maybe this behaviour shouldn't be broken.
 """
 
-from pyrosetta.io import pose_from_sequence
 from pyrosetta.rosetta.core.io.raw_data import ScoreMap
 from pyrosetta.rosetta.core.simple_metrics import clear_sm_data
 from pyrosetta.rosetta.core.pose import (Pose, clearPoseExtraScores,
@@ -49,7 +48,7 @@ __all__ = ['Pose', 'pose_from_sequence']
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     """Returns a pose from single-letter protein sequence.
 
-    Modified by pyrolyse from pyrosetta.
+    Modified from PyRosetta.
     Returns a Pose object generated from a single-letter sequence of amino acid
     residues in <seq> using the <res_type> ResidueType and creates N- and C-
     termini if <auto_termini> is set to True.
@@ -87,14 +86,15 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
 
     return pose
 
+
 # Monkey-patch read-only attributes
 # Ex: Pose.size() becomes Pose.size
 # Pose.size = 30 would return an error.
 _read_attributes = ('const_data_cache', 'data', 'energies', 'atom_tree',
                     'membrane_info', 'num_chains', 'num_jump', 'observer_cache',
                     'reference_pose_set', 'reference_pose_set_cop', 'sequence',
-                    'size', 'total_atoms', 'total_residue')
-
+                    'size', 'total_atoms', 'total_residue'
+                    )
 for attr in _read_attributes:
     setattr(Pose, attr, property(getattr(Pose, attr)))
 
@@ -119,6 +119,7 @@ Pose.pdb_info = property(Pose.pdb_info, Pose.pdb_info)
 
 # Patch data descriptors methods calling monkey-patched attribute.
 def _len_residues(self):
+    """Modified from PyRosetta."""
     return self.pose.size
 
 
@@ -126,11 +127,15 @@ PoseResidueAccessor.__len__ = _len_residues
 
 
 def _len_reslabels(self):
+    """Modified from PyRosetta."""
     return self.pose.pdb_info.nres()
 
 
 def _getitem_reslabels(self, key):
-    """1-based index and slice over residue labels."""
+    """1-based index and slice over residue labels.
+
+    Modified from PyRosetta.
+    """
     if isinstance(key, slice):
         return (self[i] for i in range(*slice_1base_indicies(key, len(self))))
     else:
@@ -146,12 +151,14 @@ PoseResidueLabelAccessor.__getitem__ = _getitem_reslabels
 
 
 def _get_energies_scores(self):
+    """Modified from PyRosetta."""
     import types
 
     return types.MappingProxyType(self.pose.energies.active_total_energies())
 
 
 def _get_all_scores(self):
+    """Modified from PyRosetta."""
     import types
 
     return types.MappingProxyType(
@@ -164,7 +171,9 @@ def _get_all_scores(self):
 
 
 def _clear_scores(self):
-    """ Clear pose energies, extra scores, and SimpleMetric data"""
+    """ Clear pose energies, extra scores, and SimpleMetric data
+
+    Modified from PyRosetta."""
     self.pose.energies.clear()
     clearPoseExtraScores(self.pose)
     clear_sm_data(self.pose)

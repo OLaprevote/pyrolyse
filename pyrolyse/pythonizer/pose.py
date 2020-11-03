@@ -24,8 +24,14 @@ class TorsionList(list):
 
 
 def torsion_list_property(getter, setter):
+    # TODO: Change this for DNA torsion lists
     def get_torsions(pose):
-        torsion_list = (getter(pose, resid) for resid in range(1, pose.size+1))
+        torsion_list = (getter(pose, resid) for resid in range(1, pose.total_residue+1)
+                        if any((pose.residue(resid).is_protein(),
+                                pose.residue(resid).is_carbohydrate(),
+                                pose.residue(resid).is_peptoid()
+                                ))
+                        )
         return TorsionList(pose, setter, torsion_list)
 
     def set_torsions(pose, new_torsions):
