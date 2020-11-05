@@ -6,7 +6,8 @@ import importlib
 
 from numpy.testing import assert_array_equal
 
-from pyrosetta import init, pose_from_sequence
+from pyrosetta import init
+from pyrolyse.utils import get_pose
 
 
 init(set_logging_handler=True)
@@ -14,12 +15,11 @@ init(set_logging_handler=True)
 
 class TestResidueAttributes:
     from pyrolyse.residue import _read_attributes, _read_write_attributes
-    from pyrolyse.pose import pose_from_sequence
 
     test_attributes = list(_read_attributes)
     test_attributes.remove('carbohydrate_info')
     test_write_attr = list(_read_write_attributes)
-    ros_pose = pose_from_sequence('PYTEST')
+    ros_pose = get_pose('PYTEST')
     lys_res = ros_pose.residue(2)
 
     # Lazy but gets the work done.
