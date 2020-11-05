@@ -34,8 +34,7 @@ set_secstruct: then settable for range of residues
 
 from pyrosetta.rosetta.core.io.raw_data import ScoreMap
 from pyrosetta.rosetta.core.simple_metrics import clear_sm_data
-from pyrosetta.rosetta.core.pose import (Pose, clearPoseExtraScores,
-                                         make_pose_from_sequence, PDBInfo)
+from pyrosetta.rosetta.core.pose import Pose, clearPoseExtraScores
 from pyrosetta.bindings.pose import (PoseResidueAccessor,
                             PoseResidueLabelAccessor, PoseScoreAccessor)
 
@@ -43,49 +42,6 @@ from .pythonizer.pose import TorsionList, torsion_list_property
 
 
 __all__ = ['Pose', 'pose_from_sequence']
-
-
-def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
-    """Returns a pose from single-letter protein sequence.
-
-    Modified from PyRosetta.
-    Returns a Pose object generated from a single-letter sequence of amino acid
-    residues in <seq> using the <res_type> ResidueType and creates N- and C-
-    termini if <auto_termini> is set to True.
-
-    Unlike make_pose_from_sequence(), this method generates a default PDBInfo
-    and sets all torsion angles to 180 degrees.
-
-    Example
-    -------
-    pose = pose_from_sequence("THANKSEVAN")
-
-    See also
-    --------
-    Pose
-    make_pose_from_sequence()
-    pose_from_file()
-    pose_from_rcsb()
-    """
-    pose = Pose()
-    make_pose_from_sequence(pose, seq, res_type, auto_termini)
-
-    for i in range(0, pose.total_residue):
-        res = pose.residue(i + 1)
-        if not res.is_protein() or res.is_peptoid() or res.is_carbohydrate():
-            continue
-
-        pose.set_phi(i + 1, 180)
-        pose.set_psi(i + 1, 180)
-        pose.set_omega(i + 1, 180)
-
-    # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here;
-    # we have to reserve space for atoms....
-    pose.pdb_info = PDBInfo(pose)
-    pose.pdb_info.name(seq[:8])
-
-    return pose
-
 
 # Monkey-patch read-only attributes
 # Ex: Pose.size() becomes Pose.size
@@ -111,7 +67,6 @@ for attr in _torsions_attributes:
     setter = getattr(Pose, 'set_{}'.format(attr))
     setattr(Pose, torsion_list_name, torsion_list_property(getter, setter))
 
-
 # Read/Set property
 Pose.fold_tree = property(Pose.fold_tree, Pose.fold_tree)
 Pose.pdb_info = property(Pose.pdb_info, Pose.pdb_info)
@@ -128,7 +83,10 @@ PoseResidueAccessor.__len__ = _len_residues
 
 def _len_reslabels(self):
     """Modified from PyRosetta."""
-    return self.pose.pdb_info.nres()
+    try:
+        return self.pose.pdb_info.nres()
+    except TypeError:
+        return self.pose.pdb_info.nres
 
 
 def _getitem_reslabels(self, key):

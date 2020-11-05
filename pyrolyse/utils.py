@@ -3,8 +3,10 @@ import logging
 import os
 from pathlib import Path
 
-import pyrosetta as ros
-from pyrosetta.io import pose_from_file, pose_from_sequence
+import pyrosetta as pyr
+import pyrosetta.rosetta as ros
+
+from pyrosetta.io import pose_from_file
 from pyrosetta.toolbox.rcsb import pose_from_rcsb
 
 
@@ -17,12 +19,44 @@ logger.setLevel(logging.WARNING)
 
 # LOG catches logs, the idea is to have a variable you can call if you
 # retrospectively want to see logs while stdout is disabled.
-# Currently catching anything only if rosetta logger level set to INFO.
-# Also doesn't disable log to be printed to stdout.
+# Currently useless: catching anything only if rosetta logger level set
+# to INFO. Also doesn't disable log to be printed to stdout.
 LOG = StringIO()
 
 stream_handler = logging.StreamHandler(LOG)
 stream_handler.setLevel(logging.INFO)
+
+
+def pose_from_sequence(seq, res_type='fa_standard', auto_termini=True):
+    pose = ros.core.pose.Pose()
+    ros.core.pose.make_pose_from_sequence(pose, seq, res_type, auto_termini)
+
+    try:
+        total_residue = pose.total_residue()
+        pose.pdb_info(ros.core.pose.PDBInfo(pose))
+        pdb_info = pose.pdb_info()
+    except TypeError:
+        total_residue = pose.total_residue
+        pose.pdb_info = ros.core.pose.PDBInfo(pose)
+        pdb_info = pose.pdb_info
+
+    for i in range(1, total_residue + 1):
+        res = pose.residue(i)
+        if not res.is_protein() or res.is_peptoid() or res.is_carbohydrate():
+            continue
+
+        pose.set_phi(i, 180)
+        pose.set_psi(i, 180)
+        pose.set_omega(i, 180)
+
+    # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here;
+    # we have to reserve space for atoms....
+    try:
+        pdb_info.name(seq[:8])
+    except TypeError:
+        pdb_info.name = seq[:8]
+
+    return pose
 
 
 def get_pose(pose_input, kind=None):
@@ -49,10 +83,15 @@ def get_pose(pose_input, kind=None):
         if Path(pose_input).exists():
             return pose_from_file(str(pose_input))
 
-        elif ((len(pose_input) == 4 and any(c.isdigit() for c in pose_input))):
+        elif any(c in str(pose_input) for c in ['.', os.sep]):
+            raise FileNotFoundError(
+                'No such file or directory: {}'.format(pose_input))
+
+        elif len(pose_input) == 4 and any(c.isdigit() for c in pose_input):
             return pose_from_rcsb(pose_input)
 
-        else: return pose_from_sequence(pose_input)
+        else:
+            return pose_from_sequence(pose_input)
 
     else:
         if kind == 'file':
@@ -67,7 +106,6 @@ def get_pose(pose_input, kind=None):
         else: raise TypeError(("Argument kind can only be str 'file', "
                 "'rcsb', 'sequence' or None type. Argument entered: {value}, "
                 "{kind_type}").format(value=kind, kind_type=type(kind)))
-
 
 
 def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True,
@@ -91,7 +129,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True,
     #TODO
     # Find way to totally redirect stdout
 
-    ros.init(options, extra_options, set_logging_handler, notebook, silent)
+    pyr.init(options, extra_options, set_logging_handler, notebook, silent)
 
 
 def digest():
