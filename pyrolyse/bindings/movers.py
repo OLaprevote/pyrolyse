@@ -1,5 +1,5 @@
 # Dark magic, temporary if possible.
-class CallableProperty(property):
+class _CallableProperty(property):
     def __init__(self, fcall=None, fget=None, fset=None, fdel=None, doc=None):
         self._call = fcall
         super().__init__(fget, fset, fdel, doc)
@@ -24,10 +24,10 @@ class AngleMaxDict(dict):
         self.obj.angle_max(index, value)
 
 
-def get_angles_max(self):
+def _get_angles_max(self):
     return(AngleMaxDict(self))
 
 
-def set_angles_max(self, angles):
+def _set_angles_max(self, angles):
     for sec in angles.keys():
         self.angle_max(sec, angles[sec])

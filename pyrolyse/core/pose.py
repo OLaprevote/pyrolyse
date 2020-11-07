@@ -38,7 +38,7 @@ from pyrosetta.rosetta.core.pose import Pose, clearPoseExtraScores
 from pyrosetta.bindings.pose import (PoseResidueAccessor,
                             PoseResidueLabelAccessor, PoseScoreAccessor)
 
-from ..pythonizer.pose import TorsionList, torsion_list_property
+from ..bindings.pose import _torsion_list_property
 
 
 __all__ = ['Pose',]
@@ -65,7 +65,7 @@ for attr in _torsions_attributes:
     torsion_list_name = '{}s'.format(attr)
     getter = getattr(Pose, attr)
     setter = getattr(Pose, 'set_{}'.format(attr))
-    setattr(Pose, torsion_list_name, torsion_list_property(getter, setter))
+    setattr(Pose, torsion_list_name, _torsion_list_property(getter, setter))
 
 # Read/Set property
 Pose.fold_tree = property(Pose.fold_tree, Pose.fold_tree)

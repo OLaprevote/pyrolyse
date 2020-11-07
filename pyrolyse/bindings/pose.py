@@ -23,7 +23,7 @@ class TorsionList(list):
                                " slices, not {}").format(type(index).__name__))
 
 
-def torsion_list_property(getter, setter):
+def _torsion_list_property(getter, setter):
     # TODO: Change this for DNA torsion lists
     def get_torsions(pose):
         torsion_list = (getter(pose, resid) for resid in range(1, pose.total_residue+1)

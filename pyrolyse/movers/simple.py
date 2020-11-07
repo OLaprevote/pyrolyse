@@ -1,22 +1,21 @@
 from pyrosetta.rosetta.protocols.simple_moves import SmallMover, ShearMover
 
-from ..pythonizer.mover.simple import (CallableProperty, get_angles_max,
-                                       set_angles_max)
+from ..bindings.movers import (_CallableProperty, _get_angles_max,
+                                 _set_angles_max)
 
 
-__all__ = ['SmallMover']
-
+__all__ = ['SmallMover', 'ShearMover']
 
 # movemap can now also be set using mover.movemap = new_movemap
 # One pitt fall, though: writing mover.movemap = pose would
 # be the same as writing mover.movemap(pose).
-SmallMover.movemap = CallableProperty(SmallMover.movemap.__call__,
+SmallMover.movemap = _CallableProperty(SmallMover.movemap.__call__,
                                       SmallMover.movemap.__get__,
                                       SmallMover.movemap)
 
 SmallMover.temperature = property(SmallMover.temperature, SmallMover.temperature)
 SmallMover.nmoves = property(SmallMover.nmoves, SmallMover.nmoves)
-SmallMover.angles_max = property(get_angles_max, set_angles_max)
+SmallMover.angles_max = property(_get_angles_max, _set_angles_max)
 
 SmallMover.__call__ = SmallMover.apply
 SmallMover.__doc__ = """Mover randomly perturbing phi and psi of a residue
@@ -63,13 +62,13 @@ Examples
 
 
 # Make movemap settable
-ShearMover.movemap = CallableProperty(ShearMover.movemap.__call__,
+ShearMover.movemap = _CallableProperty(ShearMover.movemap.__call__,
                                       ShearMover.movemap.__get__,
                                       ShearMover.movemap)
 
 ShearMover.temperature = property(ShearMover.temperature, ShearMover.temperature)
 ShearMover.nmoves = property(ShearMover.nmoves, ShearMover.nmoves)
-ShearMover.angles_max = property(get_angles_max, set_angles_max)
+ShearMover.angles_max = property(_get_angles_max, _set_angles_max)
 
 # Make ShearMover callable
 ShearMover.__call__ = ShearMover.apply
