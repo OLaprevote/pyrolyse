@@ -14,7 +14,7 @@ init(set_logging_handler=True)
 
 
 class TestResidueAttributes:
-    from pyrolyse.residue import _read_attributes, _read_write_attributes
+    from pyrolyse.core.residue import _read_attributes, _read_write_attributes
 
     test_attributes = list(_read_attributes)
     test_attributes.remove('carbohydrate_info')

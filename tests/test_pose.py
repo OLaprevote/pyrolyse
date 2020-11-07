@@ -14,7 +14,7 @@ init(set_logging_handler=True)
 
 
 class TestPoseAttributes:
-    from pyrolyse.pose import _read_attributes
+    from pyrolyse.core.pose import _read_attributes
 
     # Getting membrane_info returns an error as there is no membrane.
     test_attributes = list(_read_attributes)

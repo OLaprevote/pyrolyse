@@ -38,7 +38,7 @@ from pyrosetta.rosetta.core.pose import Pose, clearPoseExtraScores
 from pyrosetta.bindings.pose import (PoseResidueAccessor,
                             PoseResidueLabelAccessor, PoseScoreAccessor)
 
-from .pythonizer.pose import TorsionList, torsion_list_property
+from ..pythonizer.pose import TorsionList, torsion_list_property
 
 
 __all__ = ['Pose',]

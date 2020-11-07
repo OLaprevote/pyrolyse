@@ -14,7 +14,7 @@ init(set_logging_handler=True)
 
 
 class TestPDBInfoAttributes:
-    from pyrolyse.pdbinfo import (_read_attributes, _read_write_attributes,
+    from pyrolyse.core.pdbinfo import (_read_attributes, _read_write_attributes,
                                   _get_set_pairs)
 
     test_attributes = list(_read_attributes)
