@@ -41,7 +41,7 @@ from pyrosetta.bindings.pose import (PoseResidueAccessor,
 from .pythonizer.pose import TorsionList, torsion_list_property
 
 
-__all__ = ['Pose', 'pose_from_sequence']
+__all__ = ['Pose',]
 
 # Monkey-patch read-only attributes
 # Ex: Pose.size() becomes Pose.size
@@ -140,3 +140,31 @@ def _clear_scores(self):
 PoseScoreAccessor.energies = property(_get_energies_scores)
 PoseScoreAccessor.all = property(_get_all_scores)
 PoseScoreAccessor.clear = _clear_scores
+
+def _pdb_rsd(self, chain, resNo):
+    """Look up a specific PDB-numbered residue and return it.
+
+    Modified from PyRosetta by pyrolyse.
+
+    Parameters
+    ----------
+        chain_and_resNo (tuple): a tuple representing the PDB description of the residue
+            in the format (chainID, resNo). For example, residue 1 on chain A would be
+            ("A", 1).
+
+    Returns
+    -------
+        pyrosetta.core.conformation.Residue or None: the Residue instance in the Pose.
+        returns `None` if the PDB residue identifier is invalid.
+    """
+    try:
+        return self.residue(self.pdb_info().pdb2pose(chain, resNo))
+    except TypeError:
+        try:
+            return self.residue(self.pdb_info.pdb2pose(chain, resNo))
+        except IndexError:
+            return
+    except IndexError:
+        return
+
+Pose.pdb_rsd = _pdb_rsd
