@@ -1,8 +1,8 @@
 class TorsionList(list):
-    def __init__(self, pose, torsion_setter, *args):
+    def __init__(self, pose, torsion_setter, *args, **kwargs):
         self.pose = pose
         self.torsion_setter = torsion_setter
-        super().__init__(*args)
+        super().__init__(*args, **kwargs)
 
     def __setitem__(self, index, value):
         if isinstance(index, int):
