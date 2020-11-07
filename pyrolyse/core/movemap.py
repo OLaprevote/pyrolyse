@@ -11,7 +11,7 @@ def _init_movemap(self, *args, bb=False, branches=False, chi=False, jump=False,
     self.set_branches(branches)
     self.set_chi(chi)
     self.set_jump(jump)
-    self.nu(nu)
+    self.set_nu(nu)
 
 
 MoveMap.__init__ = _init_movemap
@@ -80,3 +80,4 @@ Examples
 >>> mmap.set_bb(True)
 >>> mmap2 = lys.MoveMap(bb=True)
 >>> mmap3 = lys.MoveMap(mmap2, chi=True, jump=True)
+"""
