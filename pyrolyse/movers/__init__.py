@@ -1,2 +1,2 @@
 from . import simple
-from .sequence import SequenceMover
+from .moves import SequenceMover, RepeatMover
