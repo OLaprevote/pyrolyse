@@ -127,79 +127,18 @@ small_mover = simple.SmallMover(movemap, 1., 1)
 small_mover(pose)   # Same than small_mover.apply
 ```
 
-More examples are showcased in the notebook directory while following PyRosetta notebooks
-tutorials.
+More examples are showcased in the notebook directory. 
 
-# Work In Progress
+## Todo
 
-## Logging
-Make python logging levels fit with Rosetta C++ ones. Currently everything
-from info to warnings is outputed to logging.INFO level.
-
-Setup pyrolyse to automatically stdout only warnings or higher: anyway the
-logger can be set to `logging.INFO` with simple
-`pyrolyse.logger.setLevel('INFO')`.
-
-Just in case, store in a module variable `pyrolyse.LOG` which registers
-some of the last logs even at info level. This way if a particularly long
-process was executed and there is a problem not showing in warnings, one
-can get the last info logs from pyrolyse.LOG.
-
-Enable the above behavior only if python is interactive (console or notebook),
-NOT in script: in this case everything at INFO or less (depending on flags
-in init) should be shown.
-
-# TODO
-
-## Digest
-Have a `pyrolyse.digest` function. For PyRosetta objects like
-`Energies`, `Pose`, `Residue` or `Pose.residues` would automatically
-output a `pandas DataFrame` with the important infos. For other objects
-would output a dictionary, a list or a `numpy array`. There
-could be several functions like `pyrolyse.list`, `pyrolyse.dict`,
-`pyrolyse.dataframe`, etc and `pyrolyse.digest` would apply them given
-different types.
-
-## Make movers and movemap setup easier
-Be able to write:
-```python
-import pyrolyse.all as lys
-
-sfxn = foo1()
-movemap = lys.MoveMap(bb=True)
-min_mover = lys.movers.simple.SmallMover(score_function=sfxn, movemap=movemap)
-```
-
-instead of:
-```python
-from pyrosetta.teaching import SmallMover
-
-sfxn = 
-mmap = MoveMap()
-mmap.set_bb(True)
-small_mover = SmallMover(mmap, 1., 1)
-MinMover.set_score_function(sfxn)
-```
-
-Add a function `apply_movers` wich takes a pose and a generator of movers,
-then apply them sequencially to said pose.
-Although it is possible to do it currently in one line with:
-```python
-map(lambda mover: getattr(mover, apply)(pose), list_movers)
-```
-
-Make `SequenceMover` able to take in a list of movers.
-
-## Use XML as functions
-RosettaScript allows variables in xml, yet it didn't seem set in PyRosetta.
-(Though I haven't investigated yet.)
-Add a simple `xml_func` taking a xml with variables in it
-and creating a function from it, like:
-```python
-new_pyrosetta_protocol = pyrolyse.xml_func(xml_string)
-new_pyrosetta_protocol(protein_to_dock, number_of_protein_to_design)
-```
-
-Case example: xml used for peptide generation in 2016 article
-from Chevalier & al. could be distributed as a simple PyRosetta function.
-
+- Add missing docstrings.
+- Add a line like "Modified by pyrolyse in pyrolise.movers.simple" in every docstring so that modification is easily seen and source code is easily found.
+- Write a setup.py with more than one line and add a version following [semantic versioning](https://semver.org/).
+- Then add a version tag on git.
+- Finish to process movers which were partially but not fully monkey-patched.
+- Check if by modifying base class Mover changes spread to inheriting movers (let's hope).
+- Movemap attributes
+- Enhance logging
+- Digest
+- Stop writing notebooks and converts the rest of PyRosetta.
+- Check if all python functions of PyRosetta work with current changes (probably not).
