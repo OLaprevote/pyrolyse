@@ -10,7 +10,7 @@ from pyrosetta.io import pose_from_file
 from pyrosetta.toolbox.rcsb import pose_from_rcsb
 
 
-__all__ = ['logger', 'LOG', 'get_pose', 'init', 'digest']
+__all__ = ['logger', 'get_pose', 'init', 'digest']
 
 
 # WIP
@@ -21,10 +21,10 @@ logger.setLevel(logging.WARNING)
 # retrospectively want to see logs while stdout is disabled.
 # Currently useless: catching anything only if rosetta logger level set
 # to INFO. Also doesn't disable log to be printed to stdout.
-LOG = StringIO()
-
-stream_handler = logging.StreamHandler(LOG)
-stream_handler.setLevel(logging.INFO)
+#
+# LOG = StringIO()
+# stream_handler = logging.StreamHandler(LOG)
+# stream_handler.setLevel(logging.INFO)
 
 
 def pose_from_sequence(seq, res_type='fa_standard', auto_termini=True):
