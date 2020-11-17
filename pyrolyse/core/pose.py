@@ -168,3 +168,67 @@ def _pdb_rsd(self, chain, resNo):
         return
 
 Pose.pdb_rsd = _pdb_rsd
+
+Pose.__doc__ = """Molecular system representation
+
+The Pose class represents a molecular system (protein-dna-ligand...)
+as a container of Rosetta Residue objects together with
+a Conformation object that defines how internal coordinate changes
+propagate through the system and an Energies object that stores
+information from the last energy evaluation.
+
+The main responsibilities of the pose are:
+
+  Kinematic:
+(a) to update the xyz coordinates in response to changes to internal
+degrees of freedom, and
+(b) to update internal coordinates when the user modifes the xyz
+(Cartesian) coords,
+
+  Scoring:
+(a) to keep track of what parts of the structure have changed since
+the last score evaluation, and
+(b) to cache residue and residue-pair energies for efficient re-use
+
+ As a container:
+The pose provides a single object for passing
+a molecular system and for copying of entire molecules
+or stretches of molecules from one Pose object into another.
+
+Modified by pyrosetta in pyrosetta.core.pose
+
+Parameters
+----------
+1. No argument
+2. arg0: pyrosetta.rosetta.core.pose.Pose
+3.
+src: pyrosetta.rosetta.core.pose.Pose
+residue_begin: int
+residue_end: int
+
+Attributes
+----------
+atom_tree
+energies
+fold_tree
+pdb_info
+sequence
+size
+
+Methods
+-------
+assign
+conformation
+dump_pdb
+dump_cif
+dump_mmtf
+dump_file
+residue
+
+Examples
+--------
+>>> pose = pyr.Pose()
+>>> new_pose = pyr.Pose()
+>>> new_pose.assign(pose)
+>>> new_pose.pdb_info = ros.core.pose.PDBInfo()
+"""

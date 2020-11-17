@@ -31,3 +31,38 @@ for get_attr, set_attr in _get_set_pairs:
     getter = getattr(PDBInfo, get_attr)
     setter = getattr(PDBInfo, set_attr)
     setattr(PDBInfo, get_attr, property(getter, setter))
+
+PDBInfo.__doc__ = """Maintains pdb residue & atom information inside a Pose
+
+Upon creation of new residue records, e.g. when calling the
+constructors without 'init' or appending/prepending residues, the
+chain letter for the new records will be set to a character, currently
+'^', denoting "empty record".  This character may be looked up by
+calling the static method PDBInfo::empty_record().
+
+Class implementation is biased towards simplicity and fast lookup.
+Residue/atom information are kept in vectors.  An internally maintained
+PDBPoseMap provides mapping from pdb -> pose residue numbering. This
+causes residue mutators to be a bit more expensive due to map updates,
+but this is ok because they are typically called sparingly. Accessors
+and mutators have overloaded method convention, while special mutators
+use .set_* convention.
+
+Modified by pyrosetta in pyrosetta.core.pdbinfo.
+
+Parameters
+----------
+1. No parameter
+2. n: int
+3. pose: pyrosetta.rosetta.core.pose.Pose
+4.
+pose: pyrosetta.rosetta.core.pose.Pose
+init: bool
+5. arg0: pyrosetta.rosetta.core.pose.PDBInfo
+
+Examples
+--------
+>>> new_pdb_info = ros.core.pose.PDBInfo(pose)
+>>> new_pdb_info.name = 'New name'
+>>> pose.pdb_info = new_pdb_info   # If pyrolyse pose
+"""

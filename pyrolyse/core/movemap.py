@@ -49,6 +49,8 @@ residue 4 will first check if there is any specific setting, if not, it will
 check if there is a setting for all BB torsions for residue 4, if not
 again, it will use the setting for BB torsions for all residues.
 
+Modified by pyrolyse in pyrolise.core.movemap.
+
 Parameters
 ----------
 1. No argument

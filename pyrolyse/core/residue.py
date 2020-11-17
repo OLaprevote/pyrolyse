@@ -36,5 +36,72 @@ for attr in _read_write_attributes:
 
 # TODO
 # Create chi torsion tuple
-# for attr in _torsions_attributes:
-#     setattr(Pose, torsion_list_name, torsion_list_property(chi, set_chi))
+
+Residue.__doc__ = """Instance Residue class, used for placed residues and rotamers
+
+This class is designed to be lightweight.
+It holds a const-reference ("rsd_type_") to a ResidueType object for
+access to information common to all instances of a single type, e.g.,
+Alanine or Thymine.  Residue stores any data unique to a placed residue
+or rotamer, currently:
+
+- a vector1 of Atoms, which holds the positions (and also the atom-types
+for fast access during scoring);
+
+- the sequence position and chain number, both integers
+(See the documentation of Pose::num_chains() for details about chain
+numbers, chain letters and jumps.)
+
+- the backbone, side-chain, and internal ring (if applicable) torsion
+angles (of course backbone torsions are not unique to a rotamer, and
+the chi angles are derivable from the coordinates, but storing them in
+the residue is convenient for scoring purposes).
+
+- the coordinates of an interaction center or centroid, used e.g., in the
+knowledge-based full-atom pair term ("actcoord_").  Maybe this will also
+hold the centroid position for centroid-mode scoring??
+
+Modified by pyrolyse in pyrolyse.core.residue
+
+Parameters
+----------
+1.
+rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
+dummy_arg: bool
+
+2.
+rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
+dummy_arg: bool
+
+3.
+rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
+current_rsd: pyrosetta.rosetta.core.conformation.Residue
+conformation: pyrosetta.rosetta.core.conformation.Conformation
+
+4.
+rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
+current_rsd: pyrosetta.rosetta.core.conformation.Residue
+conformation: pyrosetta.rosetta.core.conformation.Conformation
+preserve_c_beta: bool
+
+5.
+rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
+current_rsd: pyrosetta.rosetta.core.conformation.Residue
+conformation: pyrosetta.rosetta.core.conformation.Conformation
+preserve_c_beta: bool
+allow_alternate_backbone_matching: bool
+
+6. arg0: pyrosetta.rosetta.core.conformation.Residue
+
+Attributes
+----------
+aa
+natoms
+type
+
+Examples
+--------
+>>> res = pose.residue(1)
+>>> print(res.natoms)
+>>> print(res.atom_index('CA'))
+"""
