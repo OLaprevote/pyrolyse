@@ -25,37 +25,38 @@ SequenceMover.__doc__ = """A Mover that iterates through a vector of Movers
 Modified from PyRosetta by pyrolyse. Applies each mover sequentially.
 Instances are callable, equivalent to using apply method.
 
+Modified by pyrolyse at pyrolyse.movers.moves
+
 Parameters
 ----------
-1.
-No argument
-
-2.
-ms: bool
+1. No argument
+2. ms : bool
 
 3.
-mover1: pyrosetta.rosetta.protocols.moves.Mover
-mover2: pyrosetta.rosetta.protocols.moves.Mover
+mover1 : pyrosetta.rosetta.protocols.moves.Mover
+mover2 : pyrosetta.rosetta.protocols.moves.Mover
 
 4.
-mover1: pyrosetta.rosetta.protocols.moves.Mover
-mover2: pyrosetta.rosetta.protocols.moves.Mover
-mover3: pyrosetta.rosetta.protocols.moves.Mover
+mover1 : pyrosetta.rosetta.protocols.moves.Mover
+mover2 : pyrosetta.rosetta.protocols.moves.Mover
+mover3 : pyrosetta.rosetta.protocols.moves.Mover
 
-5.
-arg0: pyrosetta.rosetta.protocols,moves.SequenceMover
+5. arg0 : pyrosetta.rosetta.protocols,moves.SequenceMover
 
-movers: iterable object, optional
+Other parameters
+----------------
+movers : iterable object, optional
     Sequence of movers, arguments or kwargs added sequentially to the
     instance.
     Ex: (Mover(), (Mover(), 2.), {'mover_in': Mover(), 'weight_in': 2.})
+
 Examples
 --------
 >>> mmap = lys.MoveMap(bb=True)
->>> small_mov = lys.movers.simple.SmallMover(mmap, 1., 1)   # Random phi/psi change
+>>> small_mv = lys.movers.simple.SmallMover(mmap, 1., 1) # Random phi/psi change
 >>> pose = lys.get_pose('A'*5)
->>> two_small_mov = lys.SequenceMover([small_mov, small_mov])
->>> two_small_mov(pose)    # Randomly modifies 2 times phis and psis of pose
+>>> two_small_mv = lys.SequenceMover([small_mv, small_mv])
+>>> two_small_mv(pose)    # Randomly modifies 2 times phis and psis of pose
 """
 
 
@@ -65,14 +66,18 @@ RepeatMover.__doc__ = """Mover to repeat an input Mover a specified number of ti
 Modified from PyRosetta by pyrolyse. Instances are callable, equivalent
 to using apply method.
 
+Modified by pyrolyse at pyrolyse.movers.moves
+
 Parameters
 ----------
-1. Nothing
+1. No argument
+
 2.
 mover_in: pyrosetta.rosetta.protocols.moves.Mover
     Mover to repeat
 nmoves_in: int
     Number of times to repeat
+
 3.
 arg0: pyrosetta.rosetta.protocols.moves.RepeatMover
     RepeatMover to copy
@@ -80,8 +85,8 @@ arg0: pyrosetta.rosetta.protocols.moves.RepeatMover
 Examples
 --------
 >>> mmap = lys.MoveMap(bb=True)
->>> small_mov = lys.movers.simple.SmallMover(mmap, 1., 1) # Random phi/psi change
+>>> small_mv = lys.movers.simple.SmallMover(mmap, 1., 1) # Random phi/psi change
 >>> pose = lys.get_pose('A'*5)
->>> five_small_mov = lys.RepeatMover(small_mov, 5)
->>> five_small_mov(pose)  # Randomly modifies 5 times phis and psis of pose
+>>> five_small_mv = lys.RepeatMover(small_mv, 5)
+>>> five_small_mv(pose)  # Randomly modifies 5 times phis and psis of pose
 """

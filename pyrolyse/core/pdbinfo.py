@@ -48,17 +48,19 @@ but this is ok because they are typically called sparingly. Accessors
 and mutators have overloaded method convention, while special mutators
 use .set_* convention.
 
-Modified by pyrosetta in pyrosetta.core.pdbinfo.
+Modified by pyrolyse at pyrolyse.core.pdbinfo.
 
 Parameters
 ----------
 1. No parameter
-2. n: int
-3. pose: pyrosetta.rosetta.core.pose.Pose
+2. n : int
+3. pose : pyrosetta.rosetta.core.pose.Pose
+
 4.
-pose: pyrosetta.rosetta.core.pose.Pose
-init: bool
-5. arg0: pyrosetta.rosetta.core.pose.PDBInfo
+pose : pyrosetta.rosetta.core.pose.Pose
+init : bool
+
+5. arg0 : pyrosetta.rosetta.core.pose.PDBInfo
 
 Examples
 --------

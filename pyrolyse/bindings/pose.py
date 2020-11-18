@@ -24,6 +24,28 @@ class TorsionList(list):
 
 
 def _torsion_list_property(getter, setter):
+    """Make a torsion_list attribute from torsion getter and setter
+
+    Parameters
+    ----------
+    getter : function
+        function taking index argument returning a torsion angle
+    setter : function
+        function taking index and new torsion angle arguments
+
+    Return
+    ------
+    property
+
+    Examples
+    --------
+    >>> Pose.psis = _torsion_list_property(Pose.psi, pose.set_psi)
+    >>> pose = get_pose('LYSE')
+    >>> print(pose.psi(1))
+    >>> pose.set_psi(1, 45.)
+    >>> print(pose.psis[0])
+    >>> pose.psis[0] = 45.
+    """
     # TODO: Change this for DNA torsion lists
     def get_torsions(pose):
         torsion_list = (getter(pose, resid) for resid in range(1, pose.total_residue+1)

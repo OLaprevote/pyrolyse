@@ -49,24 +49,24 @@ residue 4 will first check if there is any specific setting, if not, it will
 check if there is a setting for all BB torsions for residue 4, if not
 again, it will use the setting for BB torsions for all residues.
 
-Modified by pyrolyse in pyrolise.core.movemap.
+Modified by pyrolyse at pyrolise.core.movemap.
 
 Parameters
 ----------
 1. No argument
-2. arg0: pyrosetta.rosetta.core.kinematics.MoveMap
+2. arg0 : pyrosetta.rosetta.core.kinematics.MoveMap
 
 Other Parameters
 ----------------
-bb: bool, optional
+bb : bool, optional
     Set whether or not BB TorsionTypes are movable
-branches: bool, optional
+branches : bool, optional
     Set whether or not BRANCH TorsionTypes are movable
-chi: bool, optional
+chi : bool, optional
     Set whether or not CHI TorsionTypes are movable
-jump: bool, optional
+jump : bool, optional
     Set whether or not BRANCH TorsionType is movable
-nu: bool, optional
+nu : bool, optional
     Set whether or not NU TorsionTypes are movable
 
 See also

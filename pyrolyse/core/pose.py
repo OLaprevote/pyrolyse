@@ -74,7 +74,7 @@ Pose.pdb_info = property(Pose.pdb_info, Pose.pdb_info)
 
 # Patch data descriptors methods calling monkey-patched attribute.
 def _len_residues(self):
-    """Modified from PyRosetta."""
+    """Modified by pyrolyse at pyrolyse.core.pose"""
     return self.pose.size
 
 
@@ -82,7 +82,7 @@ PoseResidueAccessor.__len__ = _len_residues
 
 
 def _len_reslabels(self):
-    """Modified from PyRosetta."""
+    """Modified by pyrolyse at pyrolyse.core.pose"""
     try:
         return self.pose.pdb_info.nres()
     except TypeError:
@@ -92,7 +92,7 @@ def _len_reslabels(self):
 def _getitem_reslabels(self, key):
     """1-based index and slice over residue labels.
 
-    Modified from PyRosetta.
+    Modified by pyrolyse at pyrolyse.core.pose.
     """
     if isinstance(key, slice):
         return (self[i] for i in range(*slice_1base_indicies(key, len(self))))
@@ -109,14 +109,14 @@ PoseResidueLabelAccessor.__getitem__ = _getitem_reslabels
 
 
 def _get_energies_scores(self):
-    """Modified from PyRosetta."""
+    """Modified by pyrolyse at pyrolyse.core.pose"""
     import types
 
     return types.MappingProxyType(self.pose.energies.active_total_energies())
 
 
 def _get_all_scores(self):
-    """Modified from PyRosetta."""
+    """Modified by pyrolyse at pyrolyse.core.pose"""
     import types
 
     return types.MappingProxyType(
@@ -131,7 +131,7 @@ def _get_all_scores(self):
 def _clear_scores(self):
     """ Clear pose energies, extra scores, and SimpleMetric data
 
-    Modified from PyRosetta."""
+    Modified by pyrolyse at pyrolyse.core.pose."""
     self.pose.energies.clear()
     clearPoseExtraScores(self.pose)
     clear_sm_data(self.pose)
@@ -144,18 +144,20 @@ PoseScoreAccessor.clear = _clear_scores
 def _pdb_rsd(self, chain, resNo):
     """Look up a specific PDB-numbered residue and return it.
 
-    Modified from PyRosetta by pyrolyse.
+    Modified by pyrolyse at pyrolyse.core.pose.
 
     Parameters
     ----------
-        chain_and_resNo (tuple): a tuple representing the PDB description of the residue
-            in the format (chainID, resNo). For example, residue 1 on chain A would be
-            ("A", 1).
+    chain_and_resNo : tuple
+        a tuple representing the PDB description of the residue
+        in the format (chainID, resNo). For example, residue 1 on chain A would be
+        ("A", 1).
 
     Returns
     -------
-        pyrosetta.core.conformation.Residue or None: the Residue instance in the Pose.
-        returns `None` if the PDB residue identifier is invalid.
+    pyrosetta.core.conformation.Residue or None
+        The Residue instance in the Pose.  returns `None` if the PDB
+        residue identifier is invalid.
     """
     try:
         return self.residue(self.pdb_info().pdb2pose(chain, resNo))
@@ -195,16 +197,17 @@ The pose provides a single object for passing
 a molecular system and for copying of entire molecules
 or stretches of molecules from one Pose object into another.
 
-Modified by pyrosetta in pyrosetta.core.pose
+Modified by pyrolyse at pyrolyse.core.pose
 
 Parameters
 ----------
 1. No argument
-2. arg0: pyrosetta.rosetta.core.pose.Pose
+2. arg0 : pyrosetta.rosetta.core.pose.Pose
+
 3.
-src: pyrosetta.rosetta.core.pose.Pose
-residue_begin: int
-residue_end: int
+src : pyrosetta.rosetta.core.pose.Pose
+residue_begin : int
+residue_end : int
 
 Attributes
 ----------

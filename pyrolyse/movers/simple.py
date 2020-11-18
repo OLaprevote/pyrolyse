@@ -28,23 +28,28 @@ only favorable backbone torsion angles are being selected. The number of
 perturbations, and the magnitude of perturbations, and the temperature
 in the rama check, can all be modified.
 
+Modified by pyrolyse at pyrolyse.movers.simple
+
 Parameters
 ----------
 1. No argument
-2.
-movemap_in: pyrosetta.rosetta.core.kinematics.MoveMap
-temperature_in: float
-nmoves_in: int
 
-3.
-arg0: pyrosetta.rosetta.protocols.simple_moves.SmallMover
+2.
+movemap_in : pyrosetta.rosetta.core.kinematics.MoveMap
+temperature_in : float
+    Temperature in the rama check.
+nmoves_in : int
+    Times random modifications are applied.
+
+3. arg0 : pyrosetta.rosetta.protocols.simple_moves.SmallMover
     If the only input in a SmallMover object, copies it.
 
 Attributes
 ----------
-temperature
-nmoves
-angles_max: dict
+temperature : float
+nmoves : int
+angles_max : lys.bindings.movers.AngleMaxDict
+    Inherited from dict. Get and set angle_max instead of items.
 
 Methods
 -------
@@ -86,21 +91,23 @@ in the rama check, can all be modified.
 
 Parameters
 ----------
-1. No argument.
-2.
-movemap_in: pyrosetta.rosetta.core.kinematics.MoveMap
-temperature_in: float
-nmoves_in: int
+1. No argument
 
-3.
-arg0: pyrosetta.rosetta.protocols.simple_moves.ShearMover
-    If the only input in a ShearMover object, copies it.
+2.
+movemap_in : pyrosetta.rosetta.core.kinematics.MoveMap
+temperature_in : float
+    Temperature in the rama check.
+nmoves_in : int
+    Times random modifications are applied.
+
+3. arg0 : pyrosetta.rosetta.protocols.simple_moves.ShearMover
+    Copies ShearMover object.
 
 Attributes
 ----------
-temperature
-nmoves
-angles_max: lys.pythonize.movers.simple.AngleMaxDict
+temperature : float
+nmoves : int
+angles_max : lys.bindings.movers.AngleMaxDict
     Inherited from dict. Get and set angle_max instead of items.
 
 Methods

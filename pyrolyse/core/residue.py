@@ -61,37 +61,37 @@ the residue is convenient for scoring purposes).
 knowledge-based full-atom pair term ("actcoord_").  Maybe this will also
 hold the centroid position for centroid-mode scoring??
 
-Modified by pyrolyse in pyrolyse.core.residue
+Modified by pyrolyse at pyrolyse.core.residue
 
 Parameters
 ----------
 1.
-rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
-dummy_arg: bool
+rsd_type_in : pyrosetta.rosetta.core.chemical.ResidueType
+dummy_arg : bool
 
 2.
-rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
-dummy_arg: bool
+rsd_type_in : pyrosetta.rosetta.core.chemical.ResidueType
+dummy_arg : bool
 
 3.
-rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
-current_rsd: pyrosetta.rosetta.core.conformation.Residue
-conformation: pyrosetta.rosetta.core.conformation.Conformation
+rsd_type_in : pyrosetta.rosetta.core.chemical.ResidueType
+current_rsd : pyrosetta.rosetta.core.conformation.Residue
+conformation : pyrosetta.rosetta.core.conformation.Conformation
 
 4.
-rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
-current_rsd: pyrosetta.rosetta.core.conformation.Residue
-conformation: pyrosetta.rosetta.core.conformation.Conformation
-preserve_c_beta: bool
+rsd_type_in : pyrosetta.rosetta.core.chemical.ResidueType
+current_rsd : pyrosetta.rosetta.core.conformation.Residue
+conformation : pyrosetta.rosetta.core.conformation.Conformation
+preserve_c_beta : bool
 
 5.
-rsd_type_in: pyrosetta.rosetta.core.chemical.ResidueType
-current_rsd: pyrosetta.rosetta.core.conformation.Residue
-conformation: pyrosetta.rosetta.core.conformation.Conformation
-preserve_c_beta: bool
-allow_alternate_backbone_matching: bool
+rsd_type_in : pyrosetta.rosetta.core.chemical.ResidueType
+current_rsd : pyrosetta.rosetta.core.conformation.Residue
+conformation : pyrosetta.rosetta.core.conformation.Conformation
+preserve_c_beta : bool
+allow_alternate_backbone_matching : bool
 
-6. arg0: pyrosetta.rosetta.core.conformation.Residue
+6. arg0 : pyrosetta.rosetta.core.conformation.Residue
 
 Attributes
 ----------
