@@ -1,13 +1,12 @@
-# Pyrolyse, syntactic sugar for PyRosetta
+# Pyrolyse, modifying PyRosetta syntax
 
-PyRosetta is a python API of Rosetta, a software intended for protein
-design.
+[PyRosetta](www.pyrosetta.org) is a python API of
+[Rosetta](https://www.rosettacommons.org/software/),
+a software intended for protein design.
 
-**Pyrolyse NEEDS PyRosetta to be installed.**
+**Pyrolyse NEEDS PyRosetta to work.**
 
-This package contains modified PyRosetta source code.
-Academic License for PyRosetta can be read here:
-<https://els2.comotion.uw.edu/print/licencing-option/19>
+This module also contains modified PyRosetta source code and documentation.
 
 Pyrolyse mostly performs monkey-patching of existing classes in order to make
 PyRosetta feel more pythonic. There are also some dynamic definitions of new
@@ -37,19 +36,18 @@ As PyRosetta and Rosetta are huge ever-growing softwares, not everything can be
 patched manually right away so that it gets a "pythonic" vibe.
 Which is why having an independant module doing it may be a good idea:
 while not needed to run PyRosetta, it can be imported over it to smoothen
-its use, when it has been developed. If it is not yet patched
-or too buggy, one can always use the unpatched PyRosetta function.
-
-[1]:https://www.uniprot.org/uniprot/P00966
+its use. If it is not yet patched
+or too buggy, the unpatched PyRosetta functions can always be used instead.
 
 # How to install
 
-Pyrolyse has not yet been made available on PyPI for
-easy `pip install`. Hence the best way to get it would be to get this
-repository on your computer using `git clone https://github.com/OLaprevote/pyrolyse.git`.
-Go inside, then run `pip install -e .`.
+Get this repository on your computer using `git clone https://github.com/OLaprevote/pyrolyse.git`.
+Go inside, then run `pip install -e .`. The path of the module will hence be the
+`pyrolyse` directory, meaning any changes made there can directly be tested.
 Note that the environment in which it is installed must contain PyRosetta
 package, and setuptools to do `pip`.  These are currently the only requirements.
+
+Tests use `pytest`.
 
 # How to run
 
@@ -83,7 +81,7 @@ pose_seq = lys.get_pose('A'*12)
 pose_seq = lys.pose_from_sequence('A'*12)
 ```
 
- - It is also possible to cherry-pick which classes you want to monkey-patch:
+ - It is also possible to cherry-pick which classes to monkey-patch:
 
 ```Python
 import pyrosetta as pyr
@@ -108,13 +106,11 @@ More examples are showcased in PyRosetta notebook directory.
 
 ## Todo
 
-- Add missing docstrings.
-- Add a line like "Modified by pyrolyse in pyrolise.movers.simple" in every docstring
-  so that modification is easily seen and source code is easily found.
+- Include PyRosetta as a dependency in setup.py
 - Write a setup.py with more than one line and add a version following [semantic versioning](https://semver.org/).
 - Then add a version tag on git. Or go clever parmed way and use the Versioneer.
 - Patch Mover base class: hopefully its changes repercut on other movers.
-- Probably not, though, but argument list can then be imported and concatenated
+- Probably not, though, but argument lists can then be imported and concatenated
   for each movers.
 - Finish to process movers which were partially but not fully monkey-patched.
 - Modify Movemap attributes.
@@ -122,4 +118,4 @@ More examples are showcased in PyRosetta notebook directory.
 - Make Digest function.
 - Stop writing explanatory notebooks and convert the rest of PyRosetta.
 - Check if all python functions of PyRosetta work with current changes (most probably not).
-- Not important and maybe not a good idea: add torsion angles to residues, like `pose.residue(1).psi`.
+- Not important and maybe not a good/simple idea: add torsion angles to residues, like `pose.residue(1).psi`.
